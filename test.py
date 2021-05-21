@@ -45,6 +45,16 @@ mark2base = [
     routine for routine in filtered_routines if routine.lookupType == "MarkToBase"
 ]
 
+glyf = tt["glyf"]
+hmtx = tt["hmtx"]
+os2 = tt["OS/2"]
+target_glyph = glyf[REQUIRED_BASE_YORUBA_NAME[0]]
+adv_width, lsb = hmtx[REQUIRED_BASE_YORUBA_NAME[0]]
+rsb = adv_width - target_glyph.xMax
+xheight = os2.sxHeight
+capheight = os2.sCapHeight
+
+
 for routine in mark2base:
     for rule in routine.rules:
         for base, base_metrics in rule.bases.items():
@@ -57,3 +67,11 @@ for routine in mark2base:
                             f"Found anchor for {base}:{mark_glyph} ==> {base_metrics}:{mark_metrics}"
                         )
                         print(f"{rule.base_name}, {rule.mark_name}")
+                        print(f"Base adv width: {adv_width}")
+                        print(
+                            f"Base metrics: xMin {target_glyph.xMin} xMax {target_glyph.xMax} yMin {target_glyph.yMin} yMax {target_glyph.yMax}"
+                        )
+                        print(f"LSB: {lsb}")
+                        print(f"RSB: {rsb}")
+                        print(f"x-height: {xheight}")
+                        print(f"cap height: {capheight}")
