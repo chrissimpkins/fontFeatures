@@ -15,22 +15,25 @@ REQUIRED_MARK_YORUBA_NAME = ["gravecomb", "acutecomb"]
 
 REQUIRED_LANGS = [("DFLT", "dflt"), ("latn", "dflt"), ("latn", "yor")]
 
-fontpath = Path("Montserrat-Regular.ttf")
+fontpath = Path("Bilbo-Regular.ttf")
 
 tt = TTFont(fontpath)
 ff = fontFeatures.ttLib.unparse(tt)
 
 # confirm base forms are available
 for hex in REQUIRED_BASE_YORUBA:
-    assert is_encoded_glyph_available(tt, hex)
-
-print("Found all required base forms")
+    if not is_encoded_glyph_available(tt, hex):
+        print(f"Missing base form U+{hex:04x}")
+    else:
+        print(f"Found base form U+{hex:04x}")
 
 # confirm mark forms are available
 for hex in REQUIRED_MARK_YORUBA:
-    assert is_encoded_glyph_available(tt, hex)
+    if not is_encoded_glyph_available(tt, hex):
+        print(f"Missing mark form U+{hex:04x}")
+    else:
+        print(f"Found mark form U+{hex:04x}")
 
-print("Found all required mark forms")
 
 filtered_routines = [
     routine
@@ -55,6 +58,11 @@ xheight = os2.sxHeight
 capheight = os2.sCapHeight
 
 
+print(f"LSB: {lsb}")
+print(f"RSB: {rsb}")
+print(f"x-height: {xheight}")
+print(f"cap height: {capheight}\n\n")
+
 for routine in mark2base:
     for rule in routine.rules:
         for base, base_metrics in rule.bases.items():
@@ -64,14 +72,10 @@ for routine in mark2base:
                 for mark_glyph, mark_metrics in rule.marks.items():
                     if mark_glyph in REQUIRED_MARK_YORUBA_NAME:
                         print(
-                            f"Found anchor for {base}:{mark_glyph} ==> {base_metrics}:{mark_metrics}"
+                            f"\nFound anchor for {base}:{mark_glyph} ==> {base_metrics}:{mark_metrics}"
                         )
                         print(f"{rule.base_name}, {rule.mark_name}")
                         print(f"Base adv width: {adv_width}")
                         print(
                             f"Base metrics: xMin {target_glyph.xMin} xMax {target_glyph.xMax} yMin {target_glyph.yMin} yMax {target_glyph.yMax}"
                         )
-                        print(f"LSB: {lsb}")
-                        print(f"RSB: {rsb}")
-                        print(f"x-height: {xheight}")
-                        print(f"cap height: {capheight}")
